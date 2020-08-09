@@ -97,6 +97,8 @@ const bootcampSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
@@ -104,6 +106,21 @@ const bootcampSchema = new mongoose.Schema(
 bootcampSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
+});
+
+// Cascade Delete means When bootcamp is deleted then delete all related courses
+bootcampSchema.pre('remove', async function (next) {
+  console.log(`Courses being removed from bootcamp ${this._id}`);
+  await this.model('Course').deleteMany({ bootcamp: this._id });
+  next();
+});
+
+// Reverse Populate with virtuals
+bootcampSchema.virtual('courses', {
+  ref: 'Course',
+  localField: '_id',
+  foreignField: 'bootcamp',
+  justOne: false,
 });
 
 module.exports = mongoose.model('Bootcamp', bootcampSchema);

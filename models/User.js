@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['user'],
+      enum: ['user', 'publisher'],
       default: 'user',
     },
     resetPasswordToken: String,
@@ -43,8 +43,14 @@ userSchema.pre('save', async function (next) {
 
 // Get Jwt
 
-userSchema.methods.getJwt = function () {
-  return jwt.sign(this.id, 'privateKey');
+userSchema.methods.getSignedJwtToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
+};
+
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 const User = mongoose.model('User', userSchema);
