@@ -14,6 +14,7 @@ const bootcampRoute = require('./routes/bootcampRoute');
 const courseRoute = require('./routes/courseRoute');
 const authRoute = require('./routes/authRoute');
 const userRoute = require('./routes/userRoute');
+const reviewRoute = require('./routes/reviewRoute');
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -45,6 +46,7 @@ app.use('/api/v1/bootcamps', bootcampRoute);
 app.use('/api/v1/courses', courseRoute);
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/users', userRoute);
+app.use('/api/v1/reviews', reviewRoute);
 
 // Error Middleware
 app.use(errorHandler);

@@ -15,7 +15,7 @@ exports.protect = async (req, res, next) => {
   }
 
   // If it in cookies
-  // else if(req.cookies.token){
+  // else if (req.cookies.token) {
   //   token = req.cookies.token;
   // }
 
@@ -27,13 +27,13 @@ exports.protect = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log(decoded);
+    // console.log(decoded);
 
     req.user = await User.findById(decoded.id);
 
     next();
   } catch (error) {
-    return next(new ErrorResponse('Not  authorize to access this route', 401));
+    return next(new ErrorResponse('Not  authorized to access this route', 401));
   }
 };
 
@@ -42,7 +42,7 @@ exports.authorize = (...roles) => {
   return async (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(
-        new ErrorResponse('Not  authorize to access this route', 403)
+        new ErrorResponse('Not  authorized to access this route', 403)
       );
     }
 
