@@ -6,6 +6,12 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
+const cors = require('cors');
 const connectDb = require('./config/db');
 const errorHandler = require('./middleware/error');
 
@@ -15,6 +21,7 @@ const courseRoute = require('./routes/courseRoute');
 const authRoute = require('./routes/authRoute');
 const userRoute = require('./routes/userRoute');
 const reviewRoute = require('./routes/reviewRoute');
+const { use } = require('express/lib/router');
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -32,6 +39,29 @@ app.use(cookieParser());
 
 // File Upload
 app.use(fileupload());
+
+// Prevent NoSql Injection or Sanitize data
+app.use(mongoSanitize());
+
+// Set Security Headers
+app.use(helmet());
+
+// Prevent XSS attacks means running js code in user input
+app.use(xss());
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 100,
+});
+
+app.use(limiter);
+
+// Prevent http param pollution
+app.use(hpp());
+
+// Enable cors
+app.use(cors());
 
 // Set Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
