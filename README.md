@@ -44,7 +44,7 @@ SMTP_HOST=smtp.mailtrap.io
 SMTP_PORT=2525
 SMTP_EMAIL=
 SMTP_PASSWORD=
-FROM_EMAIL=noreply@quizapp.com
+FROM_EMAIL=noreply@bootcampe.com
 FROM_NAME=Bootcamper Api
 ```
 
